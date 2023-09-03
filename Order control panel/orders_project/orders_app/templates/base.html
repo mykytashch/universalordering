@@ -1,42 +1,42 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель управления заказами</title>
+    <title>Universal Ordering</title>
 
-    <!-- Подключение Bootstrap CSS -->
+    <!-- Подключаем Bootstrap CSS и ваш CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f5f5f5;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .container {
-            margin-top: 50px;
-            background-color: #ffffff;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1, h2, h3 {
-            color: #333;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-<body>
+<body class="{{ theme_preference }}"> <!-- Добавляем класс для определения темы -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                {% block sidebar %}
+                    <!-- Сайдбар по умолчанию. Может быть переопределен в дочерних шаблонах -->
+                    <h2>Navigation</h2>
+                    <ul class="list-group">
+                        <li class="list-group-item"><a href="{% url 'order_list' %}">View Orders</a></li>
+                        <li class="list-group-item"><a href="{% url 'order_create' %}">Create New Order</a></li>
+                        <li class="list-group-item"><a href="{% url 'generate_invitation_code' %}">Generate Invitation Code</a></li>
+                    </ul>
+                    <button id="theme-toggle-btn" class="btn btn-secondary mt-3">Toggle Theme</button>
+                {% endblock %}
+            </div>
+            <div class="col-md-9">
+                {% block content %}
+                    <!-- Содержание по умолчанию. Будет переопределено в дочерних шаблонах -->
+                {% endblock %}
+            </div>
+        </div>
+    </div>
 
-<div class="container">
-    {% block content %}
-    {% endblock %}
-</div>
-
-<!-- Подключение Bootstrap JS и зависимостей (jQuery & Popper.js) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <!-- Вставьте здесь ваш JS для переключения темы и другие скрипты -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/theme-toggle.js' %}"></script>
 </body>
 </html>

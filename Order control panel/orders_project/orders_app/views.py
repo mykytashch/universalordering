@@ -10,6 +10,20 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import OrderSerializer
 from .forms import MasterCodeForm
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def update_theme_preference(request):
+    if request.method == "POST" and request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        theme_preference = request.POST.get("theme_preference")
+        if theme_preference in ["light", "dark"]:
+            # Update the user's theme preference in the database
+            request.user.theme_preference = theme_preference
+            request.user.save()
+            return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)    
+        
 
 MASTER_CODE = "656546546"
 
@@ -96,3 +110,4 @@ def register_with_invitation_code(request):
         return redirect('success_page')  
     else:
         return render(request, 'registration_page.html')
+
