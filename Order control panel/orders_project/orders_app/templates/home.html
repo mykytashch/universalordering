@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row mt-5">
+    <!-- Навигация слева -->
+    <div class="col-md-3">
+        <h2>Navigation</h2>
+        <ul class="list-group">
+            <li class="list-group-item"><a href="{% url 'order_list' %}">View Orders</a></li>
+            <li class="list-group-item"><a href="{% url 'order_create' %}">Create New Order</a></li>
+            <li class="list-group-item"><a href="{% url 'generate_invitation_code' %}">Generate Invitation Code</a></li>
+        </ul>
+    </div>
+
+    <!-- Главное содержимое -->
+    <div class="col-md-9">
+        <h1 class="text-center">Welcome to Order Control Panel</h1>
+
+        <!-- Статистика -->
+        <div class="mt-4">
+            <h2 class="text-center">Statistics</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Today</h3>
+                    <p><strong>Orders:</strong> {{ orders_today }}</p>
+                    <p><strong>New Users:</strong> {{ users_today }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h3>This Week</h3>
+                    <p><strong>Orders:</strong> {{ orders_week }}</p>
+                    <p><strong>New Users:</strong> {{ users_week }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Поиск заказов -->
+        <div class="mt-4">
+            <h2 class="text-center">Search Orders</h2>
+            <form action="{% url 'order_list' %}" method="get" class="form-inline justify-content-center">
+                <input type="text" name="q" class="form-control mr-2" placeholder="Search orders...">
+                <input type="submit" value="Search" class="btn btn-primary">
+            </form>
+        </div>
+
+        <!-- Последние заказы -->
+        <div class="mt-4">
+            <h2 class="text-center">Recent Orders</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.customer_name }}</td>
+                        <td>{{ order.created_at }}</td>
+                        <td><a href="{% url 'order_detail' order.id %}">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Вход и выход -->
+        <div class="text-center mt-5">
+            <h4>Hello, {{ request.user.username }}!</h4>
+            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

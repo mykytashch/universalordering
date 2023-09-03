@@ -1,0 +1,15 @@
+<h2>Order Panel</h2>
+
+<form method="get">
+    <input type="text" name="q" placeholder="Search...">
+    <button type="submit">Search</button>
+</form>
+
+<ul>
+{% for order in orders %}
+    <li>{{ order.name }} - {{ order.description }}</li>
+    <!-- Добавьте другие поля заказа по мере необходимости -->
+{% empty %}
+    <li>No orders found</li>
+{% endfor %}
+</ul>
