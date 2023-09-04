@@ -1,0 +1,6 @@
+<form method="post">
+    {% csrf_token %}
+    <label for="order_text">Enter Order Data:</label>
+    <textarea id="order_text" name="order_text"></textarea>
+    <button type="submit">Submit</button>
+</form>

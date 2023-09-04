@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="page-title">Order Comments - Order ID: {{ order_id }}</h2>
+
+  <div class="comments-list">
+    {% for comment in comments %}
+      <div class="comment-item">
+        <p>{{ comment.text }}</p>
+        <p>Commented by: {{ comment.user.username }}</p>
+      </div>
+    {% empty %}
+      <p>No comments for this order yet.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Форма для создания нового комментария -->
+  <form method="post">
+    {% csrf_token %}
+    <textarea name="comment_text" placeholder="Leave a comment"></textarea>
+    <button type="submit">Add Comment</button>
+  </form>
+{% endblock %}

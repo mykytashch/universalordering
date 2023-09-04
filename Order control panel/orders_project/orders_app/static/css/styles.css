@@ -13,6 +13,11 @@ body {
     padding: 20px;
 }
 
+.container-fluid {
+    margin-top: 50px; /* или любое другое значение, которое вам подходит */
+}
+
+
 /* Светлая тема по умолчанию */
 body {
     background-color: #f4f4f4;
@@ -52,9 +57,9 @@ body {
 }
 
 .dark-theme .btn-primary {
-    background-color: #375a7f;
+    background-color: #a94442;
     color: #fff;
-    border: 1px solid #2e4a66;
+    border: 1px solid #8a3b3a;
 }
 
 .dark-theme .btn-danger {

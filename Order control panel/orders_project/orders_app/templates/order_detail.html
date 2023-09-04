@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="page-title">Order Detail - {{ order.id }}</h2>
+
+  <div class="order-details">
+    <p>Order Data: {{ order.data }}</p>
+    <!-- Дополнительные поля заказа -->
+  </div>
+
+  <div class="comments">
+    <a href="{% url 'comments' order.id %}">View Comments</a>
+  </div>
+
+  <div class="comment-form">
+    <h3>Add Comment</h3>
+    <!-- Форма для добавления комментария -->
+  </div>
+{% endblock %}

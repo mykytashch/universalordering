@@ -1,3 +1,4 @@
+<!-- base.html -->
 {% load static %}
 
 <!DOCTYPE html>
@@ -11,19 +12,47 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-<body class="{{ theme_preference }}"> <!-- Добавляем класс для определения темы -->
+<body class="{{ theme_preference }}">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3">
                 {% block sidebar %}
-                    <!-- Сайдбар по умолчанию. Может быть переопределен в дочерних шаблонах -->
-                    <h2>Navigation</h2>
-                    <ul class="list-group">
-                        <li class="list-group-item"><a href="{% url 'order_list' %}">View Orders</a></li>
-                        <li class="list-group-item"><a href="{% url 'order_create' %}">Create New Order</a></li>
-                        <li class="list-group-item"><a href="{% url 'generate_invitation_code' %}">Generate Invitation Code</a></li>
-                    </ul>
-                    <button id="theme-toggle-btn" class="btn btn-secondary mt-3">Toggle Theme</button>
+                    <!-- Сайдбар для авторизованных пользователей -->
+                    {% if user.is_authenticated %}
+                        <h2>Authorized Navigation</h2>
+                        <ul class="list-group">
+                            
+        
+
+
+        
+
+        <li class="list-group-item"><a href="{% url 'order_list' %}">View Orders</a></li>
+
+        <li class="list-group-item"><a href="{% url 'unrecognized_orders' %}">Unrecognized Orders</a></li>
+        <li class="list-group-item"><a href="{% url 'generate_invitation_code' %}">Create an invite</a></li>
+
+
+        <li class="list-group-item"><a href="{% url 'order_create' %}">Create new order</a></li>
+
+        <li class="list-group-item"><a href="{% url 'home' %}">Home Page</a></li>
+        
+
+
+        <li class="list-group-item"><a href="{% url 'logout' %}">Logout</a></li>
+                            <!-- ... Другие ссылки для авторизованных пользователей ... -->
+                        </ul>
+                        <a href="{% url 'logout' %}" class="btn btn-secondary mt-3">Logout</a>
+                    {% else %}
+                        <!-- Сайдбар для неавторизованных пользователей -->
+                        <h2>Guest Navigation</h2>
+                        <ul class="list-group">
+                            <li class="list-group-item"><a href="{% url 'login' %}">Login</a></li>
+                            <li class="list-group-item"><a href="{% url 'register_with_invitation_code' %}">Register</a></li>
+                            <!-- ... Другие ссылки для неавторизованных пользователей ... -->
+                        </ul>
+                        <button id="theme-toggle-btn" class="btn btn-secondary mt-3">Toggle Theme</button>
+                    {% endif %}
                 {% endblock %}
             </div>
             <div class="col-md-9">

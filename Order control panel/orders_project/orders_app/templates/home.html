@@ -1,9 +1,23 @@
+<!-- home.html -->
 {% extends "base.html" %}
 
-{% block content %}
-    <h1 class="text-center">Welcome to Universal Ordering</h1>
+{% block sidebar %}
+    <h2>Navigation</h2>
+    <ul class="list-group">
+        <li class="list-group-item"><a href="{% url 'order_list' %}">View Orders</a></li>
+        <li class="list-group-item"><a href="{% url 'order_create' %}">Create New Order</a></li>
+        <li class="list-group-item"><a href="{% url 'unrecognized_orders' %}">Unrecognized Orders</a></li>
+        <li class="list-group-item"><a href="{% url 'generate_invitation_code' %}">Generate Invitation Code (for admin)</a></li>
+        <li class="list-group-item"><a href="{% url 'logout' %}">Logout</a></li>
+        <button id="theme-toggle-btn" class="btn btn-outline-secondary mt-2">Toggle Theme</button>
+    </ul>
+{% endblock %}
 
-    <div class="row mt-4">
+{% block content %}
+    <h1 class="text-center mb-4">Welcome to Universal Ordering</h1>
+
+    <!-- Statistics -->
+    <div class="row">
         <div class="col-md-6">
             <h2 class="text-center">Statistics</h2>
             <div class="row">
@@ -20,6 +34,7 @@
             </div>
         </div>
 
+        <!-- Search Bar -->
         <div class="col-md-6">
             <h2 class="text-center">Search Orders</h2>
             <form action="{% url 'order_list' %}" method="get" class="form-inline justify-content-center">
@@ -29,6 +44,7 @@
         </div>
     </div>
 
+    <!-- Recent Orders -->
     <div class="mt-4">
         <h2 class="text-center">Recent Orders</h2>
         <table class="table table-striped">
@@ -53,6 +69,7 @@
         </table>
     </div>
 
+    <!-- User Greeting -->
     <div class="text-center mt-5">
         <h4>Hello, {{ request.user.username }}!</h4>
         <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>

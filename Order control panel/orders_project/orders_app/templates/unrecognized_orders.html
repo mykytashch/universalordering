@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="page-title">Unrecognized Orders</h2>
+
+  <div class="unrecognized-orders-list">
+    {% for order in unrecognized_orders %}
+      <div class="unrecognized-order-item">
+        <div class="order-header">
+          <h3>Order ID: {{ order.id }}</h3>
+          <a href="{% url 'unrecognized_order_comments' order.id %}" class="comment-button">View Comments</a>
+
+          <button class="collapse-button" onclick="toggleOrderContent(this)">+</button>
+        </div>
+        <div class="order-content" style="display: none;">
+          <p>{{ order.data }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p>No unrecognized orders yet.</p>
+    {% endfor %}
+  </div>
+
+  <div class="pagination">
+    <span class="step-links">
+      <!-- ... Код пагинации ... -->
+    </span>
+  </div>
+
+  <script>
+    function toggleOrderContent(button) {
+      const orderContent = button.closest('.unrecognized-order-item').querySelector('.order-content');
+      if (orderContent.style.display === 'none') {
+        orderContent.style.display = 'block';
+        button.textContent = '-';
+      } else {
+        orderContent.style.display = 'none';
+        button.textContent = '+';
+      }
+    }
+  </script>
+{% endblock %}
