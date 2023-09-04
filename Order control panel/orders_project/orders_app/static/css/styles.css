@@ -18,6 +18,36 @@ body {
 }
 
 
+.dark-theme .card {
+    background-color: #444 !important;
+    border: none !important;
+}
+
+.dark-theme .card-title, .dark-theme .card-body, .dark-theme .card-body h5, .dark-theme .card-body p, .dark-theme .card-body ol li {
+    color: #ddd !important;
+}
+
+.dark-theme .card .btn-primary {
+    background-color: #a94442 !important;
+    border: 1px solid #8a3b3a !important;
+    color: #fff !important;
+}
+
+.dark-theme .card .btn-primary:hover {
+    background-color: #993336 !important;
+}
+
+
+.dark-theme .card {
+    background-color: #444;
+    border: none;
+}
+
+.dark-theme .card-title, .dark-theme .card-body {
+    color: #ddd;
+}
+
+
 /* Светлая тема по умолчанию */
 body {
     background-color: #f4f4f4;

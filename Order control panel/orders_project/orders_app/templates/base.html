@@ -1,4 +1,3 @@
-<!-- base.html -->
 {% load static %}
 
 <!DOCTYPE html>
@@ -11,61 +10,103 @@
     <!-- Подключаем Bootstrap CSS и ваш CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        /* Стили для кнопки переключения темы */
+        #theme-toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 5px 10px;
+            font-size: 12px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        /* Изображения для кнопки переключения темы */
+        #theme-toggle-btn::before {
+            content: "☀️";
+            color: #f0ad4e;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        #theme-toggle-btn.light-theme::before {
+            content: "🌙";
+            color: #607d8b;
+        }
+    </style>
 </head>
-<body class="{{ theme_preference }}">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-3">
-                {% block sidebar %}
-                    <!-- Сайдбар для авторизованных пользователей -->
-                    {% if user.is_authenticated %}
-                        <h2>Authorized Navigation</h2>
-                        <ul class="list-group">
-                            
-        
+<body class="{% if request.user.is_authenticated and request.user.userprofile.theme_preference == 'dark' %}dark-theme{% else %}light-theme{% endif %}">
 
-
-        
-
-        <li class="list-group-item"><a href="{% url 'order_list' %}">View Orders</a></li>
-
-        <li class="list-group-item"><a href="{% url 'unrecognized_orders' %}">Unrecognized Orders</a></li>
-        <li class="list-group-item"><a href="{% url 'generate_invitation_code' %}">Create an invite</a></li>
-
-
-        <li class="list-group-item"><a href="{% url 'order_create' %}">Create new order</a></li>
-
-        <li class="list-group-item"><a href="{% url 'home' %}">Home Page</a></li>
-        
-
-
-        <li class="list-group-item"><a href="{% url 'logout' %}">Logout</a></li>
-                            <!-- ... Другие ссылки для авторизованных пользователей ... -->
-                        </ul>
-                        <a href="{% url 'logout' %}" class="btn btn-secondary mt-3">Logout</a>
-                    {% else %}
-                        <!-- Сайдбар для неавторизованных пользователей -->
-                        <h2>Guest Navigation</h2>
-                        <ul class="list-group">
-                            <li class="list-group-item"><a href="{% url 'login' %}">Login</a></li>
-                            <li class="list-group-item"><a href="{% url 'register_with_invitation_code' %}">Register</a></li>
-                            <!-- ... Другие ссылки для неавторизованных пользователей ... -->
-                        </ul>
-                        <button id="theme-toggle-btn" class="btn btn-secondary mt-3">Toggle Theme</button>
-                    {% endif %}
-                {% endblock %}
-            </div>
-            <div class="col-md-9">
-                {% block content %}
-                    <!-- Содержание по умолчанию. Будет переопределено в дочерних шаблонах -->
-                {% endblock %}
-            </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            {% block sidebar %}
+                <!-- Сайдбар для авторизованных пользователей -->
+                {% if request.user.is_authenticated %}
+                    <h2>Authorized Navigation</h2>
+                    <ul class="list-group">
+                        <li class="list-group-item"><a href="{% url 'order_list' %}">View Orders</a></li>
+                        <li class="list-group-item"><a href="{% url 'unrecognized_orders' %}">Unrecognized Orders</a></li>
+                        <li class="list-group-item"><a href="{% url 'generate_invitation_code' %}">Create an invite</a></li>
+                        <li class="list-group-item"><a href="{% url 'order_create' %}">Create new order</a></li>
+                        <li class="list-group-item"><a href="{% url 'home' %}">Home Page</a></li>
+                        <li class="list-group-item"><a href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                    <a href="{% url 'logout' %}" class="btn btn-secondary mt-3">Logout</a>
+                {% else %}
+                    <!-- Сайдбар для неавторизованных пользователей -->
+                    <h2>Guest Navigation</h2>
+                    <ul class="list-group">
+                        <li class="list-group-item"><a href="{% url 'login' %}">Login</a></li>
+                        <li class="list-group-item"><a href="{% url 'register_with_invitation_code' %}">Register</a></li>
+                    </ul>
+                {% endif %}
+            {% endblock %}
+        </div>
+        <div class="col-md-9">
+            {% block content %}
+                <!-- Содержание по умолчанию. Будет переопределено в дочерних шаблонах -->
+             {% endblock %}
         </div>
     </div>
+</div>
+<button id="theme-toggle-btn" class="btn btn-secondary">Toggle Theme</button>
 
-    <!-- Вставьте здесь ваш JS для переключения темы и другие скрипты -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/theme-toggle.js' %}"></script>
+<!-- Ваш JavaScript для переключения темы -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#theme-toggle-btn").click(function() {
+            $("body").toggleClass("dark-theme");
+            var newTheme = $("body").hasClass("dark-theme") ? "dark" : "light";
+            var csrfToken = $("input[name=csrfmiddlewaretoken]").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/update_theme_preference/",
+                data: {
+                    theme_preference: newTheme,
+                    csrfmiddlewaretoken: csrfToken
+                },
+                success: function(data) {
+                    if (data.status === "success") {
+                        console.log("Theme preference updated successfully.");
+                    } else {
+                        console.log("Failed to update theme preference.");
+                    }
+                },
+                error: function() {
+                    console.log("Error updating theme preference.");
+                }
+            });
+        });
+
+        var userThemePreference = "{{ request.user.userprofile.theme_preference }}";
+        if (userThemePreference === "dark") {
+            $("body").addClass("dark-theme");
+        }
+    });
+</script>
+
 </body>
 </html>

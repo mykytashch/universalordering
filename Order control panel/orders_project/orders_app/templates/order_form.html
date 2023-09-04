@@ -1,6 +1,55 @@
-<form method="post">
-    {% csrf_token %}
-    <label for="order_text">Enter Order Data:</label>
-    <textarea id="order_text" name="order_text"></textarea>
-    <button type="submit">Submit</button>
-</form>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Заголовок -->
+<h1 class="mb-4">Создать заказ</h1>
+
+<!-- Форма для ввода данных заказа -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Введите данные заказа</h5>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="order_text">Enter Order Data:</label>
+                <textarea class="form-control" id="order_text" name="order_text" rows="5"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+    </div>
+</div>
+
+<!-- Инструкция по отправке заказов -->
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Инструкция по отправке заказов на нашу панель через API</h5>
+        <p>Для того чтобы отправить заказ на нашу панель, выполните следующие шаги:</p>
+        <ol>
+            <li>Подготовьте данные заказа в формате JSON.</li>
+            <li>Отправьте HTTP POST-запрос на адрес <code>http://127.0.0.1:8000/create_order/</code> с данными заказа в теле запроса.</li>
+            <li>Обработайте ответ сервера.</li>
+        </ol>
+        <p>Пример на Python:</p>
+        <pre>
+import requests
+
+data = {
+  "id": null,
+  "customer_name": "Ваше имя",
+  "product": "Название продукта",
+  "created_at": "Дата создания",
+  "updated_at": "Дата обновления"
+}
+
+response = requests.post('http://127.0.0.1:8000/create_order/', json=data)
+
+if response.status_code == 200:
+    print("Заказ успешно отправлен!")
+else:
+    print("Ошибка при отправке заказа:", response.text)
+        </pre>
+    </div>
+</div>
+
+{% endblock %}

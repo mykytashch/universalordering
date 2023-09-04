@@ -4,12 +4,41 @@
 <h2>Login</h2>
 <form method="post">
     {% csrf_token %}
-    
+
+    {# Отображение ошибок, которые не связаны с конкретным полем #}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+                {{ error }}<br>
+                <script>console.error("Login Error: {{ error }}");</script> {# Логирование ошибок в консоль #}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div class="form-group">
-        <label for="{{ form.username.id_for_label }}">Username:</label>
+        {# Отображение ошибок для поля username #}
+        {% if form.username.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.username.errors %}
+                    {{ error }}<br>
+                    <script>console.error("Username Error: {{ error }}");</script> {# Логирование ошибок в консоль #}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <label for="{{ form.username.id_for_label }}">Email:</label>
         <input type="text" name="{{ form.username.name }}" class="form-control" required id="{{ form.username.id_for_label }}" value="{{ form.username.value|default:'' }}">
     </div>
+
     <div class="form-group">
+        {# Отображение ошибок для поля password #}
+        {% if form.password.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.password.errors %}
+                    {{ error }}<br>
+                    <script>console.error("Password Error: {{ error }}");</script> {# Логирование ошибок в консоль #}
+                {% endfor %}
+            </div>
+        {% endif %}
         <label for="{{ form.password.id_for_label }}">Password:</label>
         <input type="password" name="{{ form.password.name }}" class="form-control" required id="{{ form.password.id_for_label }}">
     </div>
@@ -17,6 +46,5 @@
     <button type="submit" class="btn btn-primary">Login</button>
     <p>Еще не зарегистрированы? <a href="{% url 'register_with_invitation_code' %}">Зарегистрироваться</a></p>
     <a href="{% url 'create_order' %}">Create Order</a>
-
 </form>
 {% endblock %}

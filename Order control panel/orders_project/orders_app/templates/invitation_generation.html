@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Enter Master Code</h2>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="master_code">Master Code:</label>
+        <input type="text" name="master_code" class="form-control" required>
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary">
+  </form>
+
+  {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
