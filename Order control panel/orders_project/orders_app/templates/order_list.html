@@ -1,0 +1,56 @@
+<!-- order_panel.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Order Panel</h2>
+
+<form method="get" action="{% url 'order_panel' %}">
+    <input type="text" name="q" placeholder="Search orders..." value="{{ request.GET.q }}">
+    <input type="submit" value="Search">
+</form>
+
+
+
+<!-- Paginated Orders -->
+<div class="mt-4">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.customer_name }}</td>
+                <td>{{ order.created_at }}</td>
+                <td><a href="{% url 'order_detail' order.id %}">View</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if orders.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ orders.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+        </span>
+
+        {% if orders.has_next %}
+            <a href="?page={{ orders.next_page_number }}">next</a>
+            <a href="?page={{ orders.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}

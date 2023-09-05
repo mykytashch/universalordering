@@ -1,0 +1,26 @@
+{% for order in orders_for_page %}
+    <h3>Order ID: {{ order.id }}</h3>
+    <ul>
+        {% for comment in order.comments.all %}
+            <li>{{ comment.text }}</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if orders_for_page.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ orders_for_page.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ orders_for_page.number }} of {{ orders_for_page.paginator.num_pages }}.
+        </span>
+
+        {% if orders_for_page.has_next %}
+            <a href="?page={{ orders_for_page.next_page_number }}">next</a>
+            <a href="?page={{ orders_for_page.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
