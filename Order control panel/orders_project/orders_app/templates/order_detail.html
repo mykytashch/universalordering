@@ -6,6 +6,21 @@
   <div class="order-details">
     <p>Order Data: {{ order.data }}</p>
     <!-- Дополнительные поля заказа -->
+    
+    <!-- Для распознанных данных -->
+    {% if order.customer_name %}
+      <p>Customer Name: {{ order.customer_name }}</p>
+    {% endif %}
+    {% if order.product %}
+      <p>Product: {{ order.product }}</p>
+    {% endif %}
+    <!-- Повторите подобный код для каждого атрибута -->
+
+    <!-- Для нераспознанных данных -->
+    <button id="showUnrecognizedData">Развернуть неизвестные аргументы</button>
+    <div id="unrecognizedData" style="display: none;">
+      {{ order.unrecognized_data }}
+    </div>
   </div>
 
   <div class="comments">
@@ -16,4 +31,17 @@
     <h3>Add Comment</h3>
     <!-- Форма для добавления комментария -->
   </div>
+
+  <script>
+    // JavaScript для отображения нераспознанных данных
+    document.getElementById("showUnrecognizedData").addEventListener("click", function() {
+      let dataDiv = document.getElementById("unrecognizedData");
+      if (dataDiv.style.display === "none") {
+        dataDiv.style.display = "block";
+      } else {
+        dataDiv.style.display = "none";
+      }
+    });
+  </script>
+
 {% endblock %}

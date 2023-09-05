@@ -193,15 +193,22 @@ def unrecognized_orders(request):
     return generic_order_list(request, 'unrecognized_orders.html', Order.objects.filter(status=Order.UNRECOGNIZED))
 
 @login_required
-def generic_comments_view(request, order_id, order_model, template_name):
+def generic_comments_view(request, order_id, order_model, related_field_name, template_name):
     order_instance = get_object_or_404(order_model, id=order_id)
     if request.method == 'POST':
         comment_text = request.POST.get('comment_text')
         if comment_text:
-            Comment.objects.create(order=order_instance, text=comment_text, user=request.user)
+            Comment.objects.create(**{
+                related_field_name: order_instance, 
+                'text': comment_text, 
+                'user': request.user
+            })
             return redirect('comments', order_id=order_id)
 
-    comments = Comment.objects.filter(order=order_instance)
+    # Здесь мы создаём словарь фильтрации на лету.
+    comments_filter = {related_field_name: order_instance}
+    comments = Comment.objects.filter(**comments_filter)
+    
     context = {
         'order': order_instance,
         'comments': comments,
@@ -210,11 +217,13 @@ def generic_comments_view(request, order_id, order_model, template_name):
 
 @login_required
 def order_comments(request, order_id):
-    return generic_comments_view(request, order_id, Order, 'order_comments.html')
+    return generic_comments_view(request, order_id, Order, 'related_order', 'order_comments.html')
 
 @login_required
 def unrecognized_order_comments(request, unrecognized_order_id):
-    return generic_comments_view(request, unrecognized_order_id, UnrecognizedOrder, 'order_comments.html')
+    return generic_comments_view(request, unrecognized_order_id, UnrecognizedOrder, 'unrecognized_order', 'order_comments.html')
+
+
 
 @login_required
 def order_detail(request, order_id):

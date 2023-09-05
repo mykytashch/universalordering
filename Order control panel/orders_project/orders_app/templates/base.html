@@ -45,14 +45,12 @@
         <h2>Authorized Navigation</h2>
         <ul class="list-group">
             <li class="list-group-item"><a href="{% url 'home' %}">Home</a></li>
-            <li class="list-group-item"><a href="{% url 'order_panel' %}">Order Panel</a></li>
+
             <li class="list-group-item"><a href="{% url 'order_list' %}">Order List</a></li>
             <li class="list-group-item"><a href="{% url 'all_order_comments' %}">All Order Comments</a></li>
             <li class="list-group-item"><a href="{% url 'unrecognized_orders' %}">Unrecognized Orders</a></li>
             
             <li class="list-group-item"><a href="{% url 'create_order' %}">Create New Order</a></li>
-            <li class="list-group-item"><a href="{% url 'create_order' %}">Create Order (Function View)</a></li>
-            <li class="list-group-item"><a href="{% url 'update_theme_preference' %}">Update Theme Preference</a></li>
             <li class="list-group-item"><a href="{% url 'api_order_create' %}">API Order Create</a></li>
             <li class="list-group-item"><a href="{% url 'generate_invitation_code' %}">Generate Invitation Code</a></li>
             <li class="list-group-item"><a href="{% url 'register' %}">Register With Invitation Code</a></li>
@@ -64,7 +62,8 @@
         <h2>Guest Navigation</h2>
         <ul class="list-group">
             <li class="list-group-item"><a href="{% url 'login' %}">Login</a></li>
-            <li class="list-group-item"><a href="{% url 'register_with_invitation_code' %}">Register</a></li>
+            <li class="list-group-item"><a href="{% url 'register' %}">Register</a></li>
+
         </ul>
     {% endif %}
 {% endblock %}

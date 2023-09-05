@@ -6,7 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-zdpr*fq4$e$05e7o5pzh6^&bzh1u^p+4*ro2mh#wjzl4brr#by'
 
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.38.154']
+
 
 AUTH_USER_MODEL = 'orders_app.CustomUser'
 LOGIN_URL = '/login/'

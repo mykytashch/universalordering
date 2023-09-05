@@ -66,8 +66,10 @@
 
     <!-- User Greeting -->
     <div class="text-center mt-5">
-        <h4>Hello, {{ request.user.get_full_name }}!</h4>
+    <h4>Hello, {{ request.user.get_full_name }}!</h4>
+    
+    <p style="font-size: 15px; color: gray;">🚀 Добро пожаловать в Beta v0.2!</p>  {# Добавленная строка с информацией о версии #}
 
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-    </div>
+    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+</div>
 {% endblock %}
