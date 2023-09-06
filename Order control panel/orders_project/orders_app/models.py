@@ -1,10 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.core.validators import EmailValidator
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 import random
 import string
-
 
 
 class CustomUserManager(BaseUserManager):
@@ -34,7 +34,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, validators=[EmailValidator(message="Invalid email")])  # Using EmailValidator for validation
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
@@ -48,15 +48,27 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def get_full_name(self):
+        """Return the full name of the user."""
         return f"{self.first_name} {self.last_name}".strip()
 
     def get_short_name(self):
+        """Return the first name of the user."""
         return self.first_name
 
-THEME_CHOICES = [
-    ('light', 'Light Theme'),
-    ('dark', 'Dark Theme'),
+
+THEME_CHOICES = [  # Добавляем определение THEME_CHOICES
+    ('light', 'Light'),
+    ('dark', 'Dark'),
 ]
+
+
+class TextEntry(models.Model):
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.text[:50] + "..." if len(self.text) > 50 else self.text
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
@@ -64,6 +76,25 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.email
+
+class InvitationCode(models.Model):
+    code = models.CharField(max_length=10, unique=True)
+    is_used = models.BooleanField(default=False)
+    expiration_date = models.DateTimeField()
+
+    @staticmethod
+    def generate_unique_code():
+        """Generate a unique 10-character code."""
+        while True:
+            code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+            if not InvitationCode.objects.filter(code=code).exists():
+                return code
+
+    def set_expiration(self, hours=24):
+        """Set the expiration date for the code."""
+        self.expiration_date = timezone.now() + timezone.timedelta(hours=hours)
+        self.save()
+
 
 
 class Order(models.Model):
@@ -74,37 +105,30 @@ class Order(models.Model):
         (UNRECOGNIZED, 'Unrecognized')
     ]
 
-    customer_name = models.CharField(max_length=255, blank=True, null=True)
-    product = models.CharField(max_length=255, blank=True, null=True)
-    unrecognized_data = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default=RECOGNIZED)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    customer_name = models.CharField(max_length=255, blank=True, null=True)  # Name of the customer
+    product = models.CharField(max_length=255, blank=True, null=True)  # Product ordered by the customer
+    unrecognized_data = models.TextField(blank=True, null=True)  # Data for orders that couldn't be recognized
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default=RECOGNIZED)  # Status of the order: recognized or unrecognized
+    created_at = models.DateTimeField(auto_now_add=True)  # Date and time when the order was created
+    updated_at = models.DateTimeField(auto_now=True)  # Date and time when the order was last updated
 
     def __str__(self):
         return self.customer_name or 'Unrecognized Order'
 
 
-class InvitationCode(models.Model):
-    code = models.CharField(max_length=10, unique=True)
-    is_used = models.BooleanField(default=False)
-    expiration_date = models.DateTimeField()
-
-    @staticmethod
-    def generate_unique_code():
-        while True:
-            code = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
-            if not InvitationCode.objects.filter(code=code).exists():
-                return code
-
-    def set_expiration(self, hours=24):
-        self.expiration_date = timezone.now() + timezone.timedelta(hours=hours)
-        self.save()
 
 
 class BaseOrder(models.Model):
+    RECOGNIZED = 'recognized'
+    UNRECOGNIZED = 'unrecognized'
+    STATUS_CHOICES = [
+        (RECOGNIZED, 'Recognized'),
+        (UNRECOGNIZED, 'Unrecognized')
+    ]
+
     customer_name = models.CharField(max_length=255, blank=True, null=True)
     product = models.CharField(max_length=255, blank=True, null=True)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default=RECOGNIZED)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -114,11 +138,8 @@ class BaseOrder(models.Model):
     def __str__(self):
         return self.customer_name or 'Order'
 
-
 class RecognizedOrder(BaseOrder):
-    # Если у вас будут дополнительные поля только для распознанных заказов, добавьте их здесь
     pass
-
 
 class UnrecognizedOrder(BaseOrder):
     unrecognized_data = models.TextField(blank=True, null=True)
@@ -126,13 +147,12 @@ class UnrecognizedOrder(BaseOrder):
     def __str__(self):
         return f'Unrecognized Order - {self.id}'
 
-
 class Comment(models.Model):
     text = models.TextField()
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
+
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    related_order = models.ForeignKey(RecognizedOrder, on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
+    recognized_order = models.ForeignKey(RecognizedOrder, on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
     unrecognized_order = models.ForeignKey(UnrecognizedOrder, on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
-
-# Оставшиеся модели также остаются без изменений ...

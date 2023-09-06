@@ -1,3 +1,5 @@
+# settings.py
+from .secrets import MASTER_CODE
 import os
 from pathlib import Path
 
