@@ -1,47 +1,57 @@
 {% extends "base.html" %}
+{% load custom_filters %}  {# Загрузка наших пользовательских фильтров #}
 
 {% block content %}
   <h2 class="page-title">Order Detail - {{ order.id }}</h2>
 
   <div class="order-details">
-    <p>Order Data: {{ order.data }}</p>
-    <!-- Дополнительные поля заказа -->
-    
-    <!-- Для распознанных данных -->
-    {% if order.customer_name %}
-      <p>Customer Name: {{ order.customer_name }}</p>
-    {% endif %}
-    {% if order.product %}
-      <p>Product: {{ order.product }}</p>
-    {% endif %}
-    <!-- Повторите подобный код для каждого атрибута -->
+    <p>Order Data:</p>
 
-    <!-- Для нераспознанных данных -->
-    <button id="showUnrecognizedData">Развернуть неизвестные аргументы</button>
-    <div id="unrecognizedData" style="display: none;">
-      {{ order.unrecognized_data }}
+    {% for field, value in order_data.items %}
+      {% with description=FIELD_DESCRIPTIONS|get_item:field|default:field|title %}
+
+        {% if value %}
+          <p><strong>{{ description }}</strong>: {{ value }}</p>
+        {% endif %}
+      {% endwith %}
+    {% endfor %}
+
+    <!-- Кнопка для отображения исходного JSON заказа -->
+    <button id="showJsonSource">Развернуть исходный JSON заказа</button>
+    <div id="jsonSource" style="display: none;">
+      <pre>{{ order_data|safe }}</pre>
     </div>
   </div>
 
-  <div class="comments">
-    <a href="{% url 'comments' order.id %}">View Comments</a>
+  <h3>Comments for Order ID: {{ order.id }}</h3>
+
+  <div class="comments-list">
+    {% for comment in comments %}
+      <div class="comment-item">
+        <p>{{ comment.text }}</p>
+        <p>Commented by: {{ comment.user.username }}</p>
+      </div>
+    {% empty %}
+      <p>No comments for this order yet.</p>
+    {% endfor %}
   </div>
 
-  <div class="comment-form">
-    <h3>Add Comment</h3>
-    <!-- Форма для добавления комментария -->
-  </div>
+  <!-- Форма для создания нового комментария -->
+  <form method="post">
+    {% csrf_token %}
+    <textarea name="comment_text" placeholder="Leave a comment"></textarea>
+    <button type="submit">Add Comment</button>
+  </form>
 
   <script>
-    // JavaScript для отображения нераспознанных данных
-    document.getElementById("showUnrecognizedData").addEventListener("click", function() {
-      let dataDiv = document.getElementById("unrecognizedData");
-      if (dataDiv.style.display === "none") {
-        dataDiv.style.display = "block";
+    // JavaScript для отображения исходного JSON заказа
+    document.getElementById("showJsonSource").addEventListener("click", function() {
+      let jsonDiv = document.getElementById("jsonSource");
+      if (jsonDiv.style.display === "none") {
+        jsonDiv.style.display = "block";
       } else {
-        dataDiv.style.display = "none";
+        jsonDiv.style.display = "none";
       }
     });
   </script>
-
 {% endblock %}

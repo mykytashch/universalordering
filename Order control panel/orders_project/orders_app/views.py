@@ -12,6 +12,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from rest_framework import generics
 from django.views.decorators.csrf import csrf_exempt
+from orders_app.constants import FIELD_DESCRIPTIONS
+
 
 # внутренние импорты
 from .models import (Order, Comment, CustomUser, InvitationCode, UserProfile, 
@@ -171,7 +173,14 @@ def switch_theme(request):
 @login_required
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    return render(request, 'order_detail.html', {'order': order})
+    order_data = {field.name: getattr(order, field.name) for field in Order._meta.fields if field.name in FIELD_DESCRIPTIONS}
+    context = {
+        'order': order,
+        'order_data': order_data,
+        'FIELD_DESCRIPTIONS': FIELD_DESCRIPTIONS
+    }
+    return render(request, 'order_detail.html', context)
+
 
 @login_required
 def unrecognized_order_detail(request, order_id):
