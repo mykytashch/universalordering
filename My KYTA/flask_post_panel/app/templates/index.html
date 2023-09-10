@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Login</h2>
+    <form action="{{ url_for('login') }}" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" name="password" required>
+        </div>
+        <div>
+            <input type="submit" value="Login">
+        </div>
+    </form>
+    <p>or</p>
+    <h2>Register</h2>
+    <form action="{{ url_for('register') }}" method="post">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" name="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" name="password" required>
+        </div>
+        <div>
+            <input type="submit" value="Register">
+        </div>
+    </form>
+    <div style="position: fixed; bottom: 5px; right: 5px;">
+        <a href="{{ url_for('admin_control') }}" style="font-size: 8px; color: #ddd;">A</a>
+    </div>
+{% endblock %}

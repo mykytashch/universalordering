@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to Flask POST Panel!</h1>
+    <h2>Welcome, {{ user.username }}</h2>
+    
+    <!-- Отображаем текущий баланс пользователя -->
+    <p>Your current balance: {{ user.balance }} €</p>
+    
+    <p>Your Panels:</p>
+    <ul>
+       {% for panel in panels %}
+            <li>
+                <a href="{{ url_for('panel', panel_id=panel.id) }}">{{ panel.id }}</a>
+                <!-- Рассчитываем срок действия панели -->
+                <span>Expires on: {{ panel.expires_on.strftime('%Y-%m-%d') }}</span>
+                <!-- Добавляем ссылку для продления панели -->
+                <a href="{{ url_for('extend_panel', panel_id=panel.id) }}">[Extend]</a>
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <a href="{{ url_for('create_panel') }}">Создать новую панель</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>

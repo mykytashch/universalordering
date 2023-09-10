@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Panel {{ panel_id }}</title>
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
+            background-color: #f4f4f4;
+        }
+
+        .post-data {
+            max-height: 300px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Panel {{ panel_id }}</h1>
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    </div>
+
+    <p>Send POST requests to: {{ request.host_url }}api/post/{{ panel.unique_url }}</p>
+
+    <h2>Received POST Data:</h2>
+    <div class="post-data">
+        <ul>
+            {% for post_request in post_requests %}
+                <li><pre>{{ post_request.data|safe }}</pre></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+
+</body>
+</html>

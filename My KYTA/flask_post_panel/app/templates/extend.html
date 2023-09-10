@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extend Panel Subscription</title>
+</head>
+<body>
+    <h1>Extend Panel {{ panel.id }} Subscription</h1>
+    
+    <p>Your current balance: {{ current_user.balance }} €</p>
+    
+    <p>Choose a duration to extend your panel:</p>
+
+    <form action="{{ url_for('extend_panel', panel_id=panel.id) }}" method="post">
+        <ul>
+            {% for duration, price in prices.items() %}
+                <li>
+                    <input type="radio" name="duration" value="{{ duration }}"> 
+                    {{ duration }} - {{ price }} €
+                </li>
+            {% endfor %}
+        </ul>
+        <input type="submit" value="Purchase">
+    </form>
+    
+    <a href="{{ url_for('dashboard') }}">Return to Dashboard</a>
+</body>
+</html>
